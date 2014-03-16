@@ -169,7 +169,7 @@ Filename: <b>'.$_GET['view'].'</b>
 
     <div id="footer">
       <div class="container">
-        <p class="text-muted"> Version 0.0.2 | No folder support </p>
+        <p class="text-muted"> Version 0.0.2 | No folder support | Created by <a href='http://trurascalz.tk'>Trurascalz</a> Topic: <a href='http://forums.ulyssesmod.net/index.php/topic,7155.0.html'>ULX log viewer</a></p>
       </div>
     </div>
 
