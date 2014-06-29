@@ -6,7 +6,9 @@ if (!isset($_GET['view'])) {
 $ftp_connection = ftp_connect($host,$port);
       
 ftp_login($ftp_connection, $user, $password);
-
+if ($passiveftp == 1) {
+   ftp_pasv($ftp_connection, true);
+}
 $logpath = $path;
 ?>
 <!DOCTYPE html>
@@ -75,13 +77,32 @@ $contents = ftp_nlist($ftp_connection, ".");
         <p>
 <?php
 $arrlength=count($contents);
-
+echo '<table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Last Modified</th>
+        </tr>
+      </thead>
+      <tbody>';
 for($x=0;$x<$arrlength;$x++)
   {
    $newname = str_replace("./","",$contents[$x]);
-  echo "<a href='?view=".$newname."'>".$newname."</a>";
-  echo "<br>";
+   $lastchanged = ftp_mdtm($ftp_connection, $contents[$x]);
+
+
+
+
+   echo '
+        <tr>
+          <td><a href="?view='.$newname.'">'.$newname.'</a></td>
+          <td>'.date('F d Y H:i:s.',$lastchanged).'</td>
+        </tr>       
+   ';
+
   }
+  echo '      </tbody>
+    </table>';
 ftp_close($ftp_connection);
 }
 
@@ -90,8 +111,8 @@ if (isset($_GET['view'])) {
    if (strstr($_GET['view'],"../")) {
       die("<h1>Forbidden URL: ".$_GET['view'].". <a href='index.php'>Go Back</a></h1>");
    }
-      if (!strripos($_GET['view'],".txt")) {
-      die("<h1>Can't browse folders.<a href='index.php'>Go Back</a></h1>");
+      if (preg_match('%\b(.txt|.log)\b%i', $_GET['view']) == 0) {
+      die("<h1>Can't view that.<a href='index.php'>Go Back</a></h1>");
    }
 $file = file_get_contents('ftp://'.$user.':'.$password.'@'.$host.'/'.$path.'/'.$_GET['view'].'');
 
